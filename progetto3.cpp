@@ -99,11 +99,13 @@ int main() {
     double x0 = 1200.0;  // Popolazione iniziale delle prede
     double y0 = 1000.0;  // Popolazione iniziale dei predatori
     double A = 2.0;      // Tasso di crescita delle prede
-    double B = 0.02;     // Tasso di mortalità delle prede per interazione con i predatori
+    double B = 0.02;     // Tasso di mortalitï¿½ delle prede per interazione con i predatori
     double C = 0.01;     // Tasso di crescita dei predatori per interazione con le prede
-    double D = 1.0;      // Tasso di mortalità naturale dei predatori
+    double D = 1.0;      // Tasso di mortalitï¿½ naturale dei predatori
     double deltat = 0.001;
     double totalTime;
+
+    
 
     std::string input;
     while (true) {
@@ -144,9 +146,9 @@ int main() {
     sim.saveResults("results.csv");
 
     std::cout << "Simulazione completata. Risultati salvati su results.csv" << std::endl;
-    std::cout << "Il valore finale di x è: " << sim.getX() << std::endl;
-    std::cout << "Il valore finale di y è: " << sim.getY() << std::endl;
-    std::cout << "Il valore finale di H è: " << sim.getH() << std::endl;
+    std::cout << "Il valore finale di x ï¿½: " << sim.getX() << std::endl;
+    std::cout << "Il valore finale di y ï¿½: " << sim.getY() << std::endl;
+    std::cout << "Il valore finale di H ï¿½: " << sim.getH() << std::endl;
 
     while (true) {
         std::cout << "Dimmi a che istante di tempo vuoi sapere popolazione x, y e H (scrivi 'q' per uscire): ";
@@ -169,16 +171,15 @@ int main() {
         double queriedH = sim.getHAtTime(queryTime);
 
         if (queriedX >= 0 && queriedY >= 0 && queriedH >= 0) {
-            std::cout << "Il valore di x al tempo " << queryTime << " è: " << queriedX << std::endl;
-            std::cout << "Il valore di y al tempo " << queryTime << " è: " << queriedY << std::endl;
-            std::cout << "Il valore di H al tempo " << queryTime << " è: " << queriedH << std::endl;
+            std::cout << "Il valore di x al tempo " << queryTime << " ï¿½: " << queriedX << std::endl;
+            std::cout << "Il valore di y al tempo " << queryTime << " ï¿½: " << queriedY << std::endl;
+            std::cout << "Il valore di H al tempo " << queryTime << " ï¿½: " << queriedH << std::endl;
         }
         else {
-            std::cout << "Errore: il tempo specificato è fuori dal range della simulazione." << std::endl;
+            std::cout << "Errore: il tempo specificato ï¿½ fuori dal range della simulazione." << std::endl;
         }
     }
 
     std::cout << "Programma terminato." << std::endl;
     return 0;
 }
-
