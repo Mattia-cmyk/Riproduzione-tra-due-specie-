@@ -13,6 +13,7 @@ public:
         y_rel = y0 / e2_y;  // Valore relativo iniziale
         x_values.push_back(x0);  // Inizializza il vettore con i valori iniziali assoluti
         y_values.push_back(y0);  // Inizializza il vettore con i valori iniziali assoluti
+        H_values.push_back(calculateH(x0, y0)); // Inizializza il vettore con il valore iniziale di H
     }
 
     void evolve() {
@@ -26,16 +27,19 @@ public:
         int steps = static_cast<int>(totalTime / deltat);
         for (int i = 0; i < steps; ++i) {
             evolve();
-            x_values.push_back(x_rel * e2_x);  // Convertire al valore assoluto
-            y_values.push_back(y_rel * e2_y);  // Convertire al valore assoluto
+            double abs_x = x_rel * e2_x; // Convertire al valore assoluto
+            double abs_y = y_rel * e2_y; // Convertire al valore assoluto
+            x_values.push_back(abs_x);
+            y_values.push_back(abs_y);
+            H_values.push_back(calculateH(abs_x, abs_y));
         }
     }
 
     void saveResults(const std::string& filename) const {
         std::ofstream file(filename);
-        file << "x,y\n";
+        file << "x,y,H\n";
         for (size_t i = 0; i < x_values.size(); ++i) {
-            file << x_values[i] << "," << y_values[i] << "\n";
+            file << x_values[i] << "," << y_values[i] << "," << H_values[i] << "\n";
         }
     }
 
@@ -45,6 +49,10 @@ public:
 
     double getY() const {
         return y_rel * e2_y;  // Convertire al valore assoluto
+    }
+
+    double getH() const {
+        return calculateH(getX(), getY());
     }
 
     double getXAtTime(double time) const {
@@ -67,10 +75,24 @@ public:
         }
     }
 
+    double getHAtTime(double time) const {
+        int index = static_cast<int>(time / deltat);
+        if (index >= 0 && index < H_values.size()) {
+            return H_values[index];
+        }
+        else {
+            return -1;  // valore di errore
+        }
+    }
+
 private:
+    double calculateH(double x, double y) const {
+        return -D * std::log(x) + C * x + B * y - A * std::log(y);
+    }
+
     double x_rel, y_rel, A, B, C, D, deltat;
     double e2_x, e2_y;
-    std::vector<double> x_values, y_values;
+    std::vector<double> x_values, y_values, H_values;
 };
 
 int main() {
@@ -124,9 +146,10 @@ int main() {
     std::cout << "Simulazione completata. Risultati salvati su results.csv" << std::endl;
     std::cout << "Il valore finale di x è: " << sim.getX() << std::endl;
     std::cout << "Il valore finale di y è: " << sim.getY() << std::endl;
+    std::cout << "Il valore finale di H è: " << sim.getH() << std::endl;
 
     while (true) {
-        std::cout << "Dimmi a che istante di tempo vuoi sapere popolazione x e y (scrivi 'q' per uscire): ";
+        std::cout << "Dimmi a che istante di tempo vuoi sapere popolazione x, y e H (scrivi 'q' per uscire): ";
         std::cin >> input;
         if (input == "q") {
             break;
@@ -143,10 +166,12 @@ int main() {
 
         double queriedX = sim.getXAtTime(queryTime);
         double queriedY = sim.getYAtTime(queryTime);
+        double queriedH = sim.getHAtTime(queryTime);
 
-        if (queriedX >= 0 && queriedY >= 0) {
+        if (queriedX >= 0 && queriedY >= 0 && queriedH >= 0) {
             std::cout << "Il valore di x al tempo " << queryTime << " è: " << queriedX << std::endl;
             std::cout << "Il valore di y al tempo " << queryTime << " è: " << queriedY << std::endl;
+            std::cout << "Il valore di H al tempo " << queryTime << " è: " << queriedH << std::endl;
         }
         else {
             std::cout << "Errore: il tempo specificato è fuori dal range della simulazione." << std::endl;
