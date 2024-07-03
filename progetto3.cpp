@@ -83,6 +83,37 @@ int main() {
     double deltat = 0.001;
     double totalTime;
 
+    std::string input;
+    while (true) {
+        std::cout << "Vuoi inserire manualmente i valori di A, B, C, D, x0, y0? (default/no/sì): ";
+        std::cin >> input;
+
+        if (input == "default" || input == "no") {
+            if (input == "no") {
+                std::cout << "Usando i valori predefiniti.\n";
+            }
+            break;
+        }
+        else if (input == "sì") {
+            std::cout << "Inserisci il valore di A: ";
+            std::cin >> A;
+            std::cout << "Inserisci il valore di B: ";
+            std::cin >> B;
+            std::cout << "Inserisci il valore di C: ";
+            std::cin >> C;
+            std::cout << "Inserisci il valore di D: ";
+            std::cin >> D;
+            std::cout << "Inserisci il valore di x0: ";
+            std::cin >> x0;
+            std::cout << "Inserisci il valore di y0: ";
+            std::cin >> y0;
+            break;
+        }
+        else {
+            std::cout << "Errore: Inserisci 'default', 'no' o 'sì'.\n";
+        }
+    }
+
     std::cout << "Inserisci il tempo totale della simulazione: ";
     std::cin >> totalTime;
 
@@ -94,7 +125,6 @@ int main() {
     std::cout << "Il valore finale di x è: " << sim.getX() << std::endl;
     std::cout << "Il valore finale di y è: " << sim.getY() << std::endl;
 
-    std::string input;
     while (true) {
         std::cout << "Dimmi a che istante di tempo vuoi sapere popolazione x e y (scrivi 'q' per uscire): ";
         std::cin >> input;
