@@ -85,7 +85,7 @@ int main() {
 
     std::string input;
     while (true) {
-        std::cout << "Vuoi inserire manualmente i valori di A, B, C, D, x0, y0? (default/no/sì): ";
+        std::cout << "Vuoi inserire manualmente i valori di A, B, C, D, x0, y0? (default/no/si): ";
         std::cin >> input;
 
         if (input == "default" || input == "no") {
@@ -94,7 +94,7 @@ int main() {
             }
             break;
         }
-        else if (input == "sì") {
+        else if (input == "si") {
             std::cout << "Inserisci il valore di A: ";
             std::cin >> A;
             std::cout << "Inserisci il valore di B: ";
@@ -110,7 +110,7 @@ int main() {
             break;
         }
         else {
-            std::cout << "Errore: Inserisci 'default', 'no' o 'sì'.\n";
+            std::cout << "Errore: Inserisci 'default', 'no' o 'si'.\n";
         }
     }
 
@@ -156,3 +156,4 @@ int main() {
     std::cout << "Programma terminato." << std::endl;
     return 0;
 }
+
