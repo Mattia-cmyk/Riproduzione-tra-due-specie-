@@ -9,50 +9,49 @@ public:
         : A(A), B(B), C(C), D(D), deltat(deltat) {
         e2_x = D / C;
         e2_y = A / B;
-        x_rel = x0 / e2_x;  // Valore relativo iniziale
-        y_rel = y0 / e2_y;  // Valore relativo iniziale
-        x_values.push_back(x0);  // Inizializza il vettore con i valori iniziali assoluti
-        y_values.push_back(y0);  // Inizializza il vettore con i valori iniziali assoluti
-        H_values.push_back(calculateH(x0, y0)); // Inizializza il vettore con il valore iniziale di H
+        x_rel = x0 / e2_x;  // Initial relative value
+        y_rel = y0 / e2_y;  // Initial relative value
+        x_values.push_back(x0);  // Initialize the vector with initial absolute values
+        y_values.push_back(y0);  // Initialize the vector with initial absolute values
+        h_values.push_back(calculateH(x0, y0)); // Initialize the vector with the initial H value
+        time_values.push_back(0.0);  // Initialize the vector with the initial time value
     }
 
     void evolve() {
         double new_x_rel = x_rel + (A - B * y_rel * e2_y) * x_rel * deltat;
         double new_y_rel = y_rel + (C * x_rel * e2_x - D) * y_rel * deltat;
-        x_rel = new_x_rel > 0 ? new_x_rel : 1e-6;  // evitare numeri non positivi
-        y_rel = new_y_rel > 0 ? new_y_rel : 1e-6;  // evitare numeri non positivi
+        x_rel = new_x_rel > 0 ? new_x_rel : 1e-6;  // avoid non-positive numbers
+        y_rel = new_y_rel > 0 ? new_y_rel : 1e-6;  // avoid non-positive numbers
     }
 
     void runSimulation(double totalTime) {
         int steps = static_cast<int>(totalTime / deltat);
-        for (int i = 0; i < steps; ++i) {
+        for (int i = 1; i <= steps; ++i) {
             evolve();
-            double abs_x = x_rel * e2_x; // Convertire al valore assoluto
-            double abs_y = y_rel * e2_y; // Convertire al valore assoluto
-            x_values.push_back(abs_x);
-            y_values.push_back(abs_y);
-            H_values.push_back(calculateH(abs_x, abs_y));
+            double x = x_rel * e2_x;
+            double y = y_rel * e2_y;
+            double time = i * deltat;
+            x_values.push_back(x);  // Convert to absolute value
+            y_values.push_back(y);  // Convert to absolute value
+            h_values.push_back(calculateH(x, y)); // Calculate and store H
+            time_values.push_back(time);  // Store the current time
         }
     }
 
     void saveResults(const std::string& filename) const {
         std::ofstream file(filename);
-        file << "x,y,H\n";
+        file << "time,x,y,H\n";
         for (size_t i = 0; i < x_values.size(); ++i) {
-            file << x_values[i] << "," << y_values[i] << "," << H_values[i] << "\n";
+            file << time_values[i] << "," << x_values[i] << "," << y_values[i] << "," << h_values[i] << "\n";
         }
     }
 
     double getX() const {
-        return x_rel * e2_x;  // Convertire al valore assoluto
+        return x_rel * e2_x;  // Convert to absolute value
     }
 
     double getY() const {
-        return y_rel * e2_y;  // Convertire al valore assoluto
-    }
-
-    double getH() const {
-        return calculateH(getX(), getY());
+        return y_rel * e2_y;  // Convert to absolute value
     }
 
     double getXAtTime(double time) const {
@@ -61,7 +60,7 @@ public:
             return x_values[index];
         }
         else {
-            return -1;  // valore di errore
+            return -1;  // error value
         }
     }
 
@@ -71,41 +70,39 @@ public:
             return y_values[index];
         }
         else {
-            return -1;  // valore di errore
+            return -1;  // error value
         }
     }
 
     double getHAtTime(double time) const {
         int index = static_cast<int>(time / deltat);
-        if (index >= 0 && index < H_values.size()) {
-            return H_values[index];
+        if (index >= 0 && index < h_values.size()) {
+            return h_values[index];
         }
         else {
-            return -1;  // valore di errore
+            return -1;  // error value
         }
     }
 
 private:
+    double x_rel, y_rel, A, B, C, D, deltat;
+    double e2_x, e2_y;
+    std::vector<double> x_values, y_values, h_values, time_values;
+
     double calculateH(double x, double y) const {
         return -D * std::log(x) + C * x + B * y - A * std::log(y);
     }
-
-    double x_rel, y_rel, A, B, C, D, deltat;
-    double e2_x, e2_y;
-    std::vector<double> x_values, y_values, H_values;
 };
 
 int main() {
-    double x0 = 1200.0;  // Popolazione iniziale delle prede
-    double y0 = 1000.0;  // Popolazione iniziale dei predatori
-    double A = 2.0;      // Tasso di crescita delle prede
-    double B = 0.02;     // Tasso di mortalit� delle prede per interazione con i predatori
-    double C = 0.01;     // Tasso di crescita dei predatori per interazione con le prede
-    double D = 1.0;      // Tasso di mortalit� naturale dei predatori
+    double x0 = 1200.0;  // Initial prey population
+    double y0 = 1000.0;  // Initial predator population
+    double A = 2.0;      // Prey growth rate
+    double B = 0.02;     // Prey mortality rate per predator interaction
+    double C = 0.01;     // Predator growth rate per prey interaction
+    double D = 1.0;      // Natural predator mortality rate
     double deltat = 0.001;
     double totalTime;
-
-    
 
     std::string input;
     while (true) {
@@ -146,9 +143,8 @@ int main() {
     sim.saveResults("results.csv");
 
     std::cout << "Simulazione completata. Risultati salvati su results.csv" << std::endl;
-    std::cout << "Il valore finale di x �: " << sim.getX() << std::endl;
-    std::cout << "Il valore finale di y �: " << sim.getY() << std::endl;
-    std::cout << "Il valore finale di H �: " << sim.getH() << std::endl;
+    std::cout << "Il valore finale di x è: " << sim.getX() << std::endl;
+    std::cout << "Il valore finale di y è: " << sim.getY() << std::endl;
 
     while (true) {
         std::cout << "Dimmi a che istante di tempo vuoi sapere popolazione x, y e H (scrivi 'q' per uscire): ";
@@ -171,12 +167,12 @@ int main() {
         double queriedH = sim.getHAtTime(queryTime);
 
         if (queriedX >= 0 && queriedY >= 0 && queriedH >= 0) {
-            std::cout << "Il valore di x al tempo " << queryTime << " �: " << queriedX << std::endl;
-            std::cout << "Il valore di y al tempo " << queryTime << " �: " << queriedY << std::endl;
-            std::cout << "Il valore di H al tempo " << queryTime << " �: " << queriedH << std::endl;
+            std::cout << "Il valore di x al tempo " << queryTime << " è: " << queriedX << std::endl;
+            std::cout << "Il valore di y al tempo " << queryTime << " è: " << queriedY << std::endl;
+            std::cout << "Il valore di H al tempo " << queryTime << " è: " << queriedH << std::endl;
         }
         else {
-            std::cout << "Errore: il tempo specificato � fuori dal range della simulazione." << std::endl;
+            std::cout << "Errore: il tempo specificato è fuori dal range della simulazione." << std::endl;
         }
     }
 
