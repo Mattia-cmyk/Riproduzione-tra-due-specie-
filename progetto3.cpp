@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <gnuplot-iostream.h>
 
 class Simulation {
 public:
@@ -43,6 +44,16 @@ public:
         for (size_t i = 0; i < x_values.size(); ++i) {
             file << time_values[i] << "," << x_values[i] << "," << y_values[i] << "," << H_values[i] << "\n";
         }
+    }
+
+    void plotResultsWithGnuplot() const {
+        Gnuplot gp;
+        gp << "set title 'Simulation Results'\n";
+        gp << "set xlabel 'Time'\n";
+        gp << "set ylabel 'Population'\n";
+        gp << "plot '-' using 1:2 with lines title 'Prey (x)', '-' using 1:2 with lines title 'Predator (y)'\n";
+        gp.send1d(boost::make_tuple(time_values, x_values));
+        gp.send1d(boost::make_tuple(time_values, y_values));
     }
 
     double getX() const {
@@ -144,8 +155,9 @@ int main() {
     Simulation sim(x0, y0, A, B, C, D, deltat);
     sim.runSimulation(totalTime);
     sim.saveResults("results.csv");
+    sim.plotResultsWithGnuplot();
 
-    std::cout << "Simulazione completata. Risultati salvati su results.csv" << std::endl;
+    std::cout << "Simulazione completata. Risultati salvati su results.csv e plot.png" << std::endl;
     std::cout << "Il valore finale di x è: " << sim.getX() << std::endl;
     std::cout << "Il valore finale di y è: " << sim.getY() << std::endl;
     std::cout << "Il valore finale di H è: " << sim.getH() << std::endl;
