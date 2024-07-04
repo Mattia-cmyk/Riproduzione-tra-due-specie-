@@ -1,0 +1,4 @@
+/home/mattia/progetto3/build/CMakeFiles/sim.dir
+/home/mattia/progetto3/build/CMakeFiles/test_simulation.dir
+/home/mattia/progetto3/build/CMakeFiles/edit_cache.dir
+/home/mattia/progetto3/build/CMakeFiles/rebuild_cache.dir
