@@ -157,6 +157,7 @@ int main() {
     sim.saveResults("results.csv");
     sim.plotResultsWithGnuplot();
 
+    std::cout << "   " << std::endl;
     std::cout << "Simulazione completata. Risultati salvati su results.csv e plot.png" << std::endl;
     std::cout << "Il valore finale di x è: " << sim.getX() << std::endl;
     std::cout << "Il valore finale di y è: " << sim.getY() << std::endl;
